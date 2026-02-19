@@ -1,0 +1,311 @@
+---
+title: "Data Exploration and Modelling"
+format: html
+editor: visual
+---
+
+## 1. Libraries
+
+### 1.1 Install Libraries
+
+```{r}
+install.packages(c('tidyverse', 'skimr'))
+```
+
+### 1.2 Load Libraries
+
+```{r}
+library(tidyverse)          
+library(skimr)                
+```
+
+## 2. Load Data
+
+```{r}
+df <- read_csv('data/synthetic_customer_behavior_and_churn.csv')
+```
+
+### 2.1 Preview Data
+
+```{r}
+head(df)
+```
+
+## 3. Data Exploration
+
+### 3.1. Data Inspection
+
+#### Column Names
+
+```{r}
+colnames(df)
+```
+
+#### Distinct Customers
+
+```{r}
+n_distinct(df$customer_id)
+```
+
+#### Data Structure
+
+```{r}
+glimpse(df)
+```
+
+#### Missing Values
+
+```{r}
+skim(df)
+```
+
+### 3.2 Data Distributions
+
+#### Target Variable: Churn
+
+```{r}
+count(df, churn)
+```
+
+```{r}
+# Check for class imbalance
+prop.table(table(df$churn))
+```
+
+#### Core Numeric Variables
+
+##### Tenure Months
+
+```{r}
+ggplot(df, aes(x = tenure_months)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Customer Tenure",
+    x = "Tenure (months)",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+##### Average Session Duration
+
+```{r}
+ggplot(df, aes(x = avg_session_duration_minutes)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Customer Average Session Duration",
+    x = "Duration (minutes)",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+##### Number of Logins per Month
+
+```{r}
+ggplot(df, aes(x = number_of_logins_per_month)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Number of Logins per Month",
+    x = "Number of Logins per Month",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+##### Number of Support Tickets
+
+```{r}
+ggplot(df, aes(x = number_of_support_tickets)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Number of Support Tickets",
+    x = "Number of Support Tickets",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+##### Last Login Days Ago
+
+```{r}
+ggplot(df, aes(x = last_login_days_ago)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Last Login Days Ago",
+    x = "Last Login Days Ago",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+##### Monthly Charges
+
+```{r}
+ggplot(df, aes(x = monthly_charges)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Monthly Charges",
+    x = "Monthly Charges",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+##### Total Charges
+
+```{r}
+ggplot(df, aes(x = total_charges)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Total Charges",
+    x = "Total Charges",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+##### Age
+
+```{r}
+ggplot(df, aes(x = age)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Customer Age",
+    x = "Age",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+#### Categorical Variables
+
+##### Subscription Type
+
+```{r}
+df %>% count(subscription_type)
+```
+
+##### Contract Type
+
+```{r}
+df %>% count(contract_type)
+```
+
+##### Income Level
+
+```{r}
+df %>% count(income_level)
+```
+
+##### Region
+
+```{r}
+df %>% count(region)
+```
+
+##### Payment Method
+
+```{r}
+df %>% count(payment_method)
+```
+
+##### Promotional Response
+
+```{r}
+df %>% count(promotional_response)
+```
+
+##### Discount Used
+
+```{r}
+df %>% count(discount_used)
+```
+
+##### Usage Frequency
+
+```{r}
+df %>% count(usage_frequency)
+```
+
+##### Gender
+
+```{r}
+df %>% count(gender)
+```
+
+#### Special: Signup Date
+
+```{r}
+summary(df$signup_date)
+```
+
+```{r}
+ggplot(df, aes(x = as.Date(signup_date))) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "white") +
+  labs(
+    title = "Distribution of Signup Dates",
+    x = "Signup Date",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+#### Bivariate Analysis: Key Variables by Churn
+
+##### Tenure by Churn
+
+```{r}
+ggplot(df, aes(x = tenure_months, fill = factor(churn))) +
+  geom_histogram(position = "identity", alpha = 0.5) +
+  labs(
+    title = "Tenure Distribution by Churn",
+    x = "Tenure (months)",
+    y = "Count",
+    fill = "Churn"
+  ) +
+  theme_minimal()
+```
+
+##### Average Session Duration by Churn
+
+```{r}
+ggplot(df, aes(x = avg_session_duration_minutes, fill = factor(churn))) +
+  geom_histogram(position = "identity", alpha = 0.5) +
+  labs(
+    title = "Average Session Duration by Churn",
+    x = "Duration (minutes)",
+    y = "Count",
+    fill = "Churn"
+  ) +
+  theme_minimal()
+```
+
+##### Number of Logins by Churn
+
+```{r}
+ggplot(df, aes(x = number_of_logins_per_month, fill = factor(churn))) +
+  geom_histogram(position = "identity", alpha = 0.5) +
+  labs(
+    title = "Number of Logins per Month by Churn",
+    x = "Number of Logins per Month",
+    y = "Count",
+    fill = "Churn"
+  ) +
+  theme_minimal()
+```
+
+##### Contract Type by Churn
+
+```{r}
+df %>% count(contract_type, churn) %>% 
+  ggplot(aes(x = contract_type, y = n, fill = factor(churn))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(
+    title = "Contract Type by Churn",
+    x = "Contract Type",
+    y = "Count",
+    fill = "Churn"
+  ) +
+  theme_minimal()
+```
