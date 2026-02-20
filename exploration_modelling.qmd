@@ -4,6 +4,14 @@ format: html
 editor: visual
 ---
 
+# Customer Churn Prediction Modelling
+
+Customer churn is a critical challenge for subscription-based businesses, as acquiring new customers is often more expensive than retaining existing ones. Understanding which customers are at risk of leaving enables companies to take proactive retention actions and protect long-term revenue.
+
+This project aims to build and compare predictive models to identify customers likely to churn. Using behavioural, engagement, and contract-related data, the objective is to evaluate model performance, interpret key churn drivers, and translate analytical findings into actionable business recommendations.
+
+By combining statistical modelling with business insight, this analysis demonstrates how data-driven decision-making can improve customer retention strategies.
+
 ## 1. Libraries
 
 ### 1.1 Install Libraries
@@ -69,6 +77,8 @@ skim(df)
 ```
 
 ### 3.2 Minimal EDA
+
+As this dataset is synthetically generated, I will proceed with minimal EDA.
 
 #### Target Variable: Churn
 
@@ -162,6 +172,8 @@ Both sets show the same proportion of churn and not churns. The split should fit
 
 ## 5. Modelling
 
+For the modelling step, two different models will be created and evaluated. A logistic regression model and a decision tree based model. Based on the evaluation, business advice will be formulated.
+
 ### 5.1 Logistic Regression
 
 ```{r}
@@ -175,7 +187,7 @@ pred <- predict(model1 , newdata = churn_test, type = 'response')
 pred <- as.factor(ifelse(pred > 0.5, 1, 0))
 
 # Evaluation Metrics
-result    <- confusionMatrix(data = pred, churn_test$churn)
+result    <- confusionMatrix(data = pred, churn_test$churn, positive = '1')
 precision <- result$byClass['Pos Pred Value']
 recall    <- result$byClass['Sensitivity']
 F1        <- result$byClass['F1']
@@ -200,7 +212,7 @@ rpart.plot(tree_model)
 
 ```{r}
 pred      <- predict(tree_model, newdata = churn_test, type = "class")
-result    <- confusionMatrix(data = pred, churn_test$churn)
+result    <- confusionMatrix(data = pred, churn_test$churn, positive = '1')
 precision <- result$byClass['Pos Pred Value']
 recall    <- result$byClass['Sensitivity']
 F1        <- result$byClass['F1']
@@ -209,3 +221,28 @@ F1        <- result$byClass['F1']
 ```{r}
 result
 ```
+
+## 6. Business Insights
+
+### 6.1 Interpretations of Results
+
+The logistic regression model achieved a strong predictive performance, with an accuracy of 92.4%, balanced accuracy of 90.5%, and F1-score indicating a strong balance between precision and recall. The model correctly identifies 85% of churners while maintining a high precision of 90%, meaning most customers predicted to churn truly exhibit churn behaviour.
+
+The key churn drivers from the logistic regression coefficients: - `Satisfaction score` (-1.47, ***p*** **\< .001**) - `Number of support tickets` (+.66, ***p*** **\< .001**) - `Last login days ago` (.096, ***p*** **\< .001**) - `Contract type - yearly` (-1.38, ***p*** **\< .001**) - `Tenure` (-.053, ***p*** **\< .001**)
+
+Demographic variables were largely insignificant, suggesting churn is primarily driven by engagement and behavioural factors rather than personal characteristics.
+
+The decision tree model achieved slightly higher recall (89% vs 85%), meaning it identifies more potential churners. However, this comes at the cost of slighly lower precision (91.5% vs 92.5%), resulting in more false positive churn predictions.
+
+The overall trade-off in model choice is: - **Logistic regression**: More precise and reliable prediction, fewer false churn alarms. - **Decision tree**: Better at catching potential churners but with more false positives.
+
+The decision tree model achieved slightly higher recall (\~89% vs \~85%), meaning it identifies more potential churners. However, this comes at the cost of lower precision, resulting in more false positive churn predictions.
+
+### 6.2 Manegerial Recommendations
+
+-   Focus retention efforts on behavioural risk signals: low satisfaction, high support tickets, inactivity, short tenure, and monthly contracts. These are the strongest churn drivers.
+-   Prioritize improving customer experience and issue resolution, as dissatisfaction and support friction strongly increase churn risk.
+-   Encourage yearly subscriptions through incentives, as longer contracts significantly reduce churn probability.
+-   Use ***logistic regression*** when retention incentives are costly. Its higher precision reduces unnecessary marketing spend by limiting false churn predictions.
+-   Use the ***decision tree model*** when customer churn has high financial impact. Its higher recall identifies more at-risk customers, even if some incentives are wasted.
+-   Consider a tiered retention strategy: strong interventions for high-risk customers and lighter engagement actions for moderate-risk customers to balance budget efficiency and churn prevention.
