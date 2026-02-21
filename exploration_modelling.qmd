@@ -1,29 +1,25 @@
 ---
-title: "Data Exploration and Modelling"
-format: html
+title: "Customer Churn Prediction Modeling"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+    css: styles.css
 editor: visual
 ---
 
-# Customer Churn Prediction Modelling
+Customer churn is a critical challenge for subscription-based businesses because acquiring new customers is often more expensive than retaining existing ones. Identifying which customers are at risk of leaving enables proactive retention actions that protect long-term revenue.
 
-Customer churn is a critical challenge for subscription-based businesses, as acquiring new customers is often more expensive than retaining existing ones. Understanding which customers are at risk of leaving enables companies to take proactive retention actions and protect long-term revenue.
+This project builds and compares predictive models to identify customers likely to churn. Using behavioral, engagement, and contract-related data, the analysis evaluates model performance, interprets key churn drivers, and translates findings into actionable business recommendations.
 
-This project aims to build and compare predictive models to identify customers likely to churn. Using behavioural, engagement, and contract-related data, the objective is to evaluate model performance, interpret key churn drivers, and translate analytical findings into actionable business recommendations.
+By combining statistical modeling with business insight, this work demonstrates how data-driven decision-making can improve customer retention strategies.
 
-By combining statistical modelling with business insight, this analysis demonstrates how data-driven decision-making can improve customer retention strategies.
-
-## 1. Libraries
-
-### 1.1 Install Libraries
+## Libraries
 
 ```{r}
-install.packages(c('tidyverse', 'skimr', 'corrplot', 'janitor', 'tidymodels',
-                   'randomForest', 'caret', 'rpart', 'rpart.plot'))
-```
-
-### 1.2 Load Libraries
-
-```{r}
+#| output: false
+#| warning: false
 library(tidyverse)          
 library(skimr)    
 library(corrplot)
@@ -36,21 +32,31 @@ library(rpart.plot)
 
 ```
 
-## 2. Load Data
+------------------------------------------------------------------------
+
+## Load Data
 
 ```{r}
+#| output: false
+#| warning: false
 df <- read_csv('data/synthetic_customer_behavior_and_churn.csv')
 ```
 
-### 2.1 Preview Data
+------------------------------------------------------------------------
+
+### Preview Data
 
 ```{r}
 head(df)
 ```
 
-## 3. Data Exploration
+------------------------------------------------------------------------
 
-### 3.1. Data Overview
+## Data Exploration
+
+------------------------------------------------------------------------
+
+### Data Overview
 
 #### Column Names
 
@@ -76,9 +82,11 @@ glimpse(df)
 skim(df)
 ```
 
-### 3.2 Minimal EDA
+------------------------------------------------------------------------
 
-As this dataset is synthetically generated, I will proceed with minimal EDA.
+### Focused EDA
+
+As this dataset is synthetically generated, the exploratory analysis is intentionally concise.
 
 #### Target Variable: Churn
 
@@ -102,7 +110,7 @@ corrplot(cor_matrix,
          tl.cex = 0.5)
 ```
 
-#### Simple Churn Comparrison
+#### Simple Churn Comparison
 
 ```{r}
 df %>% 
@@ -110,9 +118,13 @@ df %>%
   summarise(across(where(is.numeric), mean))
 ```
 
-## 4. Data Manipulation
+------------------------------------------------------------------------
 
-### 4.1 Clean Data Types
+## Data Preparation
+
+------------------------------------------------------------------------
+
+### Clean Data Types
 
 ```{r}
 df <- df %>%
@@ -131,22 +143,26 @@ df <- df %>%
 
 ```
 
-### 4.2 Drop Redundant Variables
+------------------------------------------------------------------------
 
--   `customer_id` adds no value to the model so can be removed.
+### Drop Redundant Variables
 
--   `total_charges` shows a strong correlation with `montly_charges`. To prevent multicollinearity, `total_charges` is removed before modelling.
+-   `customer_id` is an identifier and is removed before modeling.
 
--   `signup_data` adds no significant value to the model as `tenure_months` is more valuable.
+-   `total_charges` shows a strong correlation with `monthly_charges`. To reduce multicollinearity, `total_charges` is removed before modeling.
+
+-   `signup_date` adds limited value because `tenure_months` captures duration more directly.
 
 ```{r}
 df <- df %>% 
   select(-customer_id, -total_charges, -signup_date)
 ```
 
-## 4.3 Split Data
+------------------------------------------------------------------------
 
-Split the data into a training set and a test set
+### Split Data
+
+Split the data into a training set and a test set.
 
 ```{r}
 set.seed(1998)
@@ -156,7 +172,7 @@ churn_train <- training(churn_split)
 churn_test <- testing(churn_split)
 ```
 
-Check if proportions in training and testing data are similar to complete dataset.
+Check whether proportions in the training and testing data are similar to the full dataset.
 
 ```{r}
 count(churn_train, churn) %>% 
@@ -168,13 +184,17 @@ count(churn_test, churn) %>%
   mutate(prop = round(n/sum(n),2))
 ```
 
-Both sets show the same proportion of churn and not churns. The split should fit the training and testing process.
+Both sets show similar churn proportions, which supports a representative split for training and evaluation.
 
-## 5. Modelling
+------------------------------------------------------------------------
 
-For the modelling step, two different models will be created and evaluated. A logistic regression model and a decision tree based model. Based on the evaluation, business advice will be formulated.
+## Modeling
 
-### 5.1 Logistic Regression
+Two models are created and evaluated: logistic regression and a decision tree. Based on their performance, business recommendations are formulated.
+
+------------------------------------------------------------------------
+
+### Logistic Regression
 
 ```{r}
 model1 <- glm(churn ~ .,
@@ -183,7 +203,7 @@ model1 <- glm(churn ~ .,
 
 pred <- predict(model1 , newdata = churn_test, type = 'response')
 
-# Convert probs to binary
+# Convert probabilities to classes
 pred <- as.factor(ifelse(pred > 0.5, 1, 0))
 
 # Evaluation Metrics
@@ -198,7 +218,9 @@ F1        <- result$byClass['F1']
 result
 ```
 
-### 5.2 Decision Tree
+------------------------------------------------------------------------
+
+### Decision Tree
 
 ```{r}
 tree_model <- rpart(churn ~ .,
@@ -222,27 +244,42 @@ F1        <- result$byClass['F1']
 result
 ```
 
-## 6. Business Insights
+------------------------------------------------------------------------
 
-### 6.1 Interpretations of Results
+## Business Insights
 
-The logistic regression model achieved a strong predictive performance, with an accuracy of 92.4%, balanced accuracy of 90.5%, and F1-score indicating a strong balance between precision and recall. The model correctly identifies 85% of churners while maintaining a high precision of 90%, meaning most customers predicted to churn truly exhibit churn behavior.
+------------------------------------------------------------------------
 
-The key churn drivers from the logistic regression coefficients: - `Satisfaction score` (-1.47, ***p*** **\< .001**) - `Number of support tickets` (+.66, ***p*** **\< .001**) - `Last login days ago` (.096, ***p*** **\< .001**) - `Contract type - yearly` (-1.38, ***p*** **\< .001**) - `Tenure` (-.053, ***p*** **\< .001**)
+### Interpretation of Results
+
+The logistic regression model achieved strong predictive performance with high accuracy and balanced accuracy. It correctly identifies most churners while maintaining strong precision, meaning most customers predicted to churn truly exhibit churn behavior.
+
+Key churn drivers from the logistic regression coefficients:
+
+-   `Satisfaction score` (-1.47, ***p*** **\< .001**)
+-   `Number of support tickets` (+0.66, ***p*** **\< .001**)
+-   `Last login days ago` (+0.096, ***p*** **\< .001**)
+-   `Contract type - yearly` (-1.38, ***p*** **\< .001**)
+-   `Tenure` (-0.053, ***p*** **\< .001**)
 
 Demographic variables were largely insignificant, suggesting churn is primarily driven by engagement and behavioral factors rather than personal characteristics.
 
-The decision tree model achieved slightly higher recall (89% vs 85%), meaning it identifies more potential churners. However, this comes at the cost of slightly lower precision (91.5% vs 92.5%), resulting in more false positive churn predictions.
+The decision tree model achieved slightly higher recall, meaning it identifies more potential churners. This comes at the cost of lower precision, resulting in more false positive churn predictions.
 
-The overall trade-off in model choice is: - **Logistic regression**: More precise and reliable prediction, fewer false churn alarms. - **Decision tree**: Better at catching potential churners but with more false positives.
+Overall trade-off in model choice:
 
-The decision tree model achieved slightly higher recall (\~89% vs \~85%), meaning it identifies more potential churners. However, this comes at the cost of lower precision, resulting in more false positive churn predictions.
+-   **Logistic regression**: More precise, fewer false churn alarms.
+-   **Decision tree**: Better at catching potential churners, but with more false positives.
 
-### 6.2 Managerial Recommendations
+------------------------------------------------------------------------
+
+### Managerial Recommendations
 
 -   Focus retention efforts on behavioral risk signals: low satisfaction, high support tickets, inactivity, short tenure, and monthly contracts. These are the strongest churn drivers.
 -   Prioritize improving customer experience and issue resolution, as dissatisfaction and support friction strongly increase churn risk.
 -   Encourage yearly subscriptions through incentives, as longer contracts significantly reduce churn probability.
--   Use ***logistic regression*** when retention incentives are costly. Its higher precision reduces unnecessary marketing spend by limiting false churn predictions.
--   Use the ***decision tree model*** when customer churn has high financial impact. Its higher recall identifies more at-risk customers, even if some incentives are wasted.
+-   Use ***logistic regression*** when retention incentives are costly. Higher precision reduces unnecessary marketing spend by limiting false churn predictions.
+-   Use the ***decision tree*** when churn has high financial impact. Higher recall identifies more at-risk customers, even if some incentives are wasted.
 -   Consider a tiered retention strategy: strong interventions for high-risk customers and lighter engagement actions for moderate-risk customers to balance budget efficiency and churn prevention.
+
+------------------------------------------------------------------------

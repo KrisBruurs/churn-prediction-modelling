@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300;400;600&family=Space+Grotesk:wght@400;600&display=swap");
+
+:root {
+  --ink: #10212b;
+  --muted: #58656d;
+  --accent: #2a7f62;
+  --accent-strong: #1e5f4a;
+  --accent-warm: #c76a2c;
+  --panel: #ffffff;
+  --bg: #f6f7f3;
+  --code-bg: #f1f3f5;
+}
+
+body {
+  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  color: var(--ink);
+  background: linear-gradient(120deg, #f6f7f3 0%, #eef3f1 45%, #f7f3ea 100%);
+  line-height: 1.65;
+}
+
+h1, h2, h3, h4 {
+  font-family: "Space Grotesk", "Segoe UI", Tahoma, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  color: var(--ink);
+  border-bottom: 4px solid var(--accent);
+  padding-bottom: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  color: var(--accent-strong);
+  margin-top: 2.5rem;
+}
+
+h3 {
+  color: var(--ink);
+}
+
+h4 {
+  color: var(--accent-warm);
+}
+
+p {
+  color: var(--muted);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #d7ddd9;
+  margin: 2rem 0;
+}
+
+nav#TOC {
+  background: var(--panel);
+  border: 1px solid #e0e4e1;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 8px 20px rgba(16, 33, 43, 0.06);
+}
+
+code, pre {
+  background: var(--code-bg);
+  border-radius: 6px;
+}
+
+pre code {
+  background: transparent;
+}
+
+table {
+  background: var(--panel);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 14px rgba(16, 33, 43, 0.04);
+}
+
+th {
+  background: #edf2ef;
+  color: var(--ink);
+}
+
+a {
+  color: var(--accent-strong);
+}
+
+blockquote {
+  border-left: 4px solid var(--accent-warm);
+  background: #fffaf2;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
