@@ -135,7 +135,7 @@ df <- df %>%
 
 -   `customer_id` adds no value to the model so can be removed.
 
--   `total_charges` shows a strong correlation with `montly_charges`. To prevent multicolinarity, `total_charges` is removed before modelling.
+-   `total_charges` shows a strong correlation with `montly_charges`. To prevent multicollinearity, `total_charges` is removed before modelling.
 
 -   `signup_data` adds no significant value to the model as `tenure_months` is more valuable.
 
@@ -156,7 +156,7 @@ churn_train <- training(churn_split)
 churn_test <- testing(churn_split)
 ```
 
-Check if proportions in training and testing data are similar to complete dataset
+Check if proportions in training and testing data are similar to complete dataset.
 
 ```{r}
 count(churn_train, churn) %>% 
@@ -226,21 +226,21 @@ result
 
 ### 6.1 Interpretations of Results
 
-The logistic regression model achieved a strong predictive performance, with an accuracy of 92.4%, balanced accuracy of 90.5%, and F1-score indicating a strong balance between precision and recall. The model correctly identifies 85% of churners while maintining a high precision of 90%, meaning most customers predicted to churn truly exhibit churn behaviour.
+The logistic regression model achieved a strong predictive performance, with an accuracy of 92.4%, balanced accuracy of 90.5%, and F1-score indicating a strong balance between precision and recall. The model correctly identifies 85% of churners while maintaining a high precision of 90%, meaning most customers predicted to churn truly exhibit churn behavior.
 
 The key churn drivers from the logistic regression coefficients: - `Satisfaction score` (-1.47, ***p*** **\< .001**) - `Number of support tickets` (+.66, ***p*** **\< .001**) - `Last login days ago` (.096, ***p*** **\< .001**) - `Contract type - yearly` (-1.38, ***p*** **\< .001**) - `Tenure` (-.053, ***p*** **\< .001**)
 
-Demographic variables were largely insignificant, suggesting churn is primarily driven by engagement and behavioural factors rather than personal characteristics.
+Demographic variables were largely insignificant, suggesting churn is primarily driven by engagement and behavioral factors rather than personal characteristics.
 
-The decision tree model achieved slightly higher recall (89% vs 85%), meaning it identifies more potential churners. However, this comes at the cost of slighly lower precision (91.5% vs 92.5%), resulting in more false positive churn predictions.
+The decision tree model achieved slightly higher recall (89% vs 85%), meaning it identifies more potential churners. However, this comes at the cost of slightly lower precision (91.5% vs 92.5%), resulting in more false positive churn predictions.
 
 The overall trade-off in model choice is: - **Logistic regression**: More precise and reliable prediction, fewer false churn alarms. - **Decision tree**: Better at catching potential churners but with more false positives.
 
 The decision tree model achieved slightly higher recall (\~89% vs \~85%), meaning it identifies more potential churners. However, this comes at the cost of lower precision, resulting in more false positive churn predictions.
 
-### 6.2 Manegerial Recommendations
+### 6.2 Managerial Recommendations
 
--   Focus retention efforts on behavioural risk signals: low satisfaction, high support tickets, inactivity, short tenure, and monthly contracts. These are the strongest churn drivers.
+-   Focus retention efforts on behavioral risk signals: low satisfaction, high support tickets, inactivity, short tenure, and monthly contracts. These are the strongest churn drivers.
 -   Prioritize improving customer experience and issue resolution, as dissatisfaction and support friction strongly increase churn risk.
 -   Encourage yearly subscriptions through incentives, as longer contracts significantly reduce churn probability.
 -   Use ***logistic regression*** when retention incentives are costly. Its higher precision reduces unnecessary marketing spend by limiting false churn predictions.
