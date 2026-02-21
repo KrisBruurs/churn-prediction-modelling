@@ -1,13 +1,13 @@
 
 # Customer Churn Prediction Modeling
 
-This portfolio project builds and compares churn prediction models on a simulated customer dataset. The analysis focuses on model performance, key churn drivers, and practical business recommendations, presented in a polished Quarto report.
+This portfolio project builds and compares churn prediction models on a simulated customer dataset. It walks through exploration, preparation, modeling, and evaluation, then connects the results to clear, actionable business recommendations in a polished Quarto report.
 
 ## Project Highlights
 
-- End-to-end workflow: data loading, exploration, preparation, modeling, evaluation, and insights
+- Reproducible workflow from data loading to insights
 - Two model families: logistic regression and decision tree
-- Business-focused interpretation and recommendations
+- Metrics-driven evaluation with clear interpretation
 - Quarto report with custom styling
 
 ## Project Structure
@@ -64,10 +64,6 @@ Make targets:
 - `make render`: run the Quarto preview for the report
 - `make remove_data`: remove downloaded data and HTML outputs
 
-## Notes
-
-- The Kaggle CLI requires an API token. Follow Kaggle setup instructions and place `kaggle.json` in your user profile as required by the CLI.
-- If `make render` fails with a Quarto not found error, ensure the Quarto CLI is installed and on PATH.
 
 ## Output
 
