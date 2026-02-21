@@ -7,7 +7,8 @@ download: download_data.R
 	Rscript download_data.R
 
 render: data/synthetic_customer_behavior_and_churn.csv
-	quarto render exploration_modelling.qmd
+	quarto preview exploration_modelling.qmd
 
-clean:
+remove_data:
 	rm -rf data/*
+	rm -rf *.html
